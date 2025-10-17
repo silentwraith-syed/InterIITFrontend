@@ -1,3 +1,4 @@
+import { Toaster } from 'sonner'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Layout from "./components/Layout";
@@ -16,6 +17,8 @@ return (
 <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
 </Routes>
 </Layout>
+<Toaster richColors position="top-center" />
 </BrowserRouter>
+
 );
 }

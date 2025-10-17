@@ -10,13 +10,15 @@ created_at: string;
 
 
 export interface Comment {
-id: ID;
-parent_id: ID | null;
-text: string;
-upvotes: number;
-created_at: string;
-user_id: ID;
+  id: ID;
+  parent_id: ID | null;
+  text: string;
+  upvotes: number;
+  created_at: string;
+  user_id: ID;
+  user?: { id?: ID; name: string; avatar?: string; createdAt?: string }; // NEW
 }
+
 
 
 export interface Post {

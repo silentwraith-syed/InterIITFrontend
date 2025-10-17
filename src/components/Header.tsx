@@ -10,8 +10,8 @@ return (
 <header className="sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-base-bg/70">
 <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
 <Link to="/" className="flex items-center gap-2">
-<div className="w-8 h-8 rounded-xl bg-brand-primary grid place-items-center text-white font-bold">I</div>
-<span className="font-semibold">InterIIT – Comments</span>
+<div className="w-8 h-8 rounded-xl bg-brand-primary grid place-items-center text-white font-bold">K</div>
+<span className="font-semibold">KGPTalks</span>
 </Link>
 <div className="flex items-center gap-2">
 {isAuthed ? (

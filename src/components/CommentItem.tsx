@@ -6,30 +6,26 @@ import { useComments } from "../store/comments";
 import Avatar from "./Avatar";
 import VoteButton from "./VoteButton";
 import CommentEditor from "./CommentEditor";
-import usersData from "../data/users.json";
+
 
 export default function CommentItem({ node, postId, depth = 0 }: { node: Node; postId: string; depth?: number }) {
-  const [open, setOpen] = useState(true);
-  const [replying, setReplying] = useState(false);
-  const upvote = useComments((s) => s.upvote);
-  const add = useComments((s) => s.add);
+  const { upvote, add } = useComments()
+  const [open, setOpen] = useState(true)
+  const [replying, setReplying] = useState(false)
 
-  const user = usersData.find((u) => u.id === node.user_id) || {
-    id: node.user_id,
-    name: "Unknown",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    created_at: new Date().toISOString(),
-  };
+  // derive display data
+  const name = node.user?.name || "Unknown"
+  const avatar = node.user?.avatar || "https://i.pravatar.cc/150?u=placeholder"
 
-  const indentClass = depth > 0 ? "ml-8 border-l-2 border-base-300 pl-4" : "";
+  const indentClass = depth > 0 ? `ml-${depth * 4}` : "";
 
   return (
-    <div className={indentClass}>
+    <div className={`mt-3 ${indentClass}`}>
       <div className="flex gap-3">
-        <Avatar src={user.avatar} alt={user.name} />
+        <Avatar src={avatar} alt={name} />
         <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="font-medium">{user.name}</span>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="font-medium">{name}</span>
             <span className="text-base-mute">· {timeAgo(node.created_at)}</span>
           </div>
           <p className="mt-1 leading-relaxed">{node.text}</p>
@@ -49,7 +45,6 @@ export default function CommentItem({ node, postId, depth = 0 }: { node: Node; p
               autoFocus
               onSubmit={async(text) => {
                 setReplying(false);
-                const postId = (document.querySelector('[data-post-id]') as HTMLElement)?.dataset.postId as string
                 await add({ postId, parent_id: node.id, text })
               }}
             />

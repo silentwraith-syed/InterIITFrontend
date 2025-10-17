@@ -8,7 +8,7 @@ A modern, Reddit‑style nested commenting interface built with **Vite + React +
 - Single post view with author card
 - Nested comments with **replies**, **upvotes**, and **collapse/expand**
 - **Sorting**: Top, New, Most Replies (bonus)
-- **Domain‑based login** (demo) – restricts to `iit.ac.in` and `interiit.org`
+- **Domain‑based login** (demo) – restricts to `kgpian.iitkgp.ac.in` and `interiit.org`
 - Smooth **animations** for expanding threads (Framer Motion)
 - Mobile‑first responsive UI
 - Local JSON seed data; state persisted with Zustand

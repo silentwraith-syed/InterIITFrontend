@@ -12,8 +12,13 @@ api.interceptors.request.use((cfg) => {
         if (raw) {
             const { state } = JSON.parse(raw)
             const token = state?.token
-            if (token) cfg.headers = { ...cfg.headers, Authorization: `Bearer ${token}` }
+            if (token) {
+                cfg.headers.Authorization = `Bearer ${token}`
+            }
         }
-    } catch {}
+    } catch (error) {
+        // Silently fail if auth token retrieval fails
+        console.debug('Failed to retrieve auth token:', error)
+    }
     return cfg
-    })
+})
