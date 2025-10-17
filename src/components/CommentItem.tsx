@@ -8,12 +8,7 @@ import VoteButton from "./VoteButton";
 import CommentEditor from "./CommentEditor";
 import usersData from "../data/users.json";
 
-interface CommentItemProps {
-  node: Node;
-  depth: number;
-}
-
-export default function CommentItem({ node, depth }: CommentItemProps) {
+export default function CommentItem({ node, postId, depth = 0 }: { node: Node; postId: string; depth?: number }) {
   const [open, setOpen] = useState(true);
   const [replying, setReplying] = useState(false);
   const upvote = useComments((s) => s.upvote);
@@ -52,15 +47,10 @@ export default function CommentItem({ node, depth }: CommentItemProps) {
           {replying && (
             <CommentEditor
               autoFocus
-              onSubmit={(text) => {
+              onSubmit={async(text) => {
                 setReplying(false);
-                add({
-                  parent_id: node.id,
-                  text,
-                  upvotes: 0,
-                  created_at: new Date().toISOString(),
-                  user_id: user.id,
-                });
+                const postId = (document.querySelector('[data-post-id]') as HTMLElement)?.dataset.postId as string
+                await add({ postId, parent_id: node.id, text })
               }}
             />
           )}
@@ -76,7 +66,7 @@ export default function CommentItem({ node, depth }: CommentItemProps) {
             transition={{ duration: 0.2 }}
           >
             {node.children.map((child) => (
-              <CommentItem key={child.id} node={child} depth={depth + 1} />
+              <CommentItem key={child.id} node={child} postId={postId} depth={depth + 1} />
             ))}
           </motion.div>
         )}

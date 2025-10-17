@@ -12,11 +12,11 @@ export default function Login() {
   const nav = useNavigate();
 
 
-  function onSubmit(e: FormEvent) {
-e.preventDefault();
-const ok = login(email, name || undefined);
-if (!ok) setError("Access restricted: use an approved domain (e.g., iit.ac.in or interiit.org)");
-else nav("/");
+  async function onSubmit(e: FormEvent) {
+e.preventDefault()
+const ok = await login(email, name || undefined)
+if (!ok) setError('Access restricted or server error. Use an approved domain.')
+else nav('/')
 }
 
 

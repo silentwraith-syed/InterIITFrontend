@@ -1,42 +1,47 @@
-import { useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { buildTree } from "../utils/tree";
-import { useComments } from "../store/comments";
-import CommentItem from "./CommentItem";
+import { useEffect, useMemo } from 'react'
+import { buildTree } from '../utils/tree'
+import type { Node } from '../utils/tree'
+import { useComments } from '../store/comments'
+import SortBar from './SortBar'
+import CommentItem from './CommentItem'
 
-export default function CommentTree() {
-  const comments = useComments((s) => s.comments);
-  const sort = useComments((s) => s.sort);
 
-  const tree = useMemo(() => {
-    const nodes = buildTree(comments);
-    if (sort === "new") {
-      return [...nodes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+export default function CommentTree({ postId }: { postId: string }) {
+  const { comments, fetchForPost, sort, loading } = useComments()
+  
+  useEffect(() => { 
+    fetchForPost(postId) 
+  }, [postId, fetchForPost])
+
+
+  const nodes: Node[] = useMemo(() => {
+    const base = buildTree(comments)
+    if (sort === 'top') {
+      return [...base].sort((a, b) => b.upvotes - a.upvotes)
     }
-    if (sort === "top") {
-      return [...nodes].sort((a, b) => b.upvotes - a.upvotes);
+    if (sort === 'new') {
+      return [...base].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     }
-    if (sort === "replies") {
-      return [...nodes].sort((a, b) => b.children.length - a.children.length);
+    if (sort === 'replies') {
+      return [...base].sort((a, b) => b.children.length - a.children.length)
     }
-    return nodes;
-  }, [comments, sort]);
+    return base
+  }, [comments, sort])
+
 
   return (
-    <div className="space-y-4">
-      <AnimatePresence mode="popLayout">
-        {tree.map((node) => (
-          <motion.div
-            key={node.id}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            <CommentItem node={node} depth={0} />
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
-  );
+    <section className="card p-5 mt-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Comments</h2>
+        <SortBar />
+      </div>
+      {loading ? <div className="mt-3">Loading…</div> : (
+        <div className="mt-2">
+          {nodes.map((n) => (
+            <CommentItem key={n.id} node={n} postId={postId} depth={0} />
+          ))}
+        </div>
+      )}
+    </section>
+  )
 }
