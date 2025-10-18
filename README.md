@@ -20,10 +20,10 @@ The platform features a dark, minimalist UI with smooth animations, optimistic u
 ## ✨ Key Features
 
 ### 🔐 Authentication System
-- **OTP-based Email Authentication** - Secure 2-step login flow
-  - Email validation with domain restriction (`kgpian.iitkgp.ac.in`)
-  - OTP code verification
-  - Back button to correct email mistakes
+- **Email/Password Authentication** - Secure login and registration
+  - Email validation with domain restriction (`kgpian.iitkgp.ac.in`, `interiit.org`)
+  - Password-based authentication with bcrypt hashing
+  - Login and registration forms with toggle
   - JWT token-based session management
   - Persistent authentication state using Zustand with localStorage
 
@@ -143,7 +143,7 @@ The platform features a dark, minimalist UI with smooth animations, optimistic u
 InterIITFrontend/
 ├── src/
 │   ├── api/                    # API Integration Layer
-│   │   ├── auth.ts            # OTP request/verify endpoints
+│   │   ├── auth.ts            # Login/register endpoints
 │   │   ├── client.ts          # Axios instance with interceptors
 │   │   ├── comments.ts        # Comment CRUD operations
 │   │   └── posts.ts           # Post fetching logic
@@ -161,7 +161,7 @@ InterIITFrontend/
 │   │
 │   ├── pages/                 # Route-level Pages
 │   │   ├── Home.tsx           # Main feed with post + comments
-│   │   ├── Login.tsx          # 2-step OTP authentication
+│   │   ├── Login.tsx          # Email/password authentication
 │   │   └── ProtectedRoute.tsx # Auth guard wrapper
 │   │
 │   ├── store/                 # Zustand State Stores
@@ -250,13 +250,13 @@ The frontend is designed to work with a REST API that provides:
 
 #### Authentication
 ```typescript
-POST /api/auth/request-otp
-Body: { email: string, name?: string }
-Response: { message: "OTP sent" }
+POST /api/auth/register
+Body: { email: string, password: string, name?: string }
+Response: { token: string, user: { id, email, name, avatar?, createdAt } }
 
-POST /api/auth/verify-otp
-Body: { email: string, code: string }
-Response: { token: string, user: { id, email, name } }
+POST /api/auth/login
+Body: { email: string, password: string }
+Response: { token: string, user: { id, email, name, avatar?, createdAt } }
 ```
 
 #### Posts

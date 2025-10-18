@@ -1,57 +1,51 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { requestOtp, verifyOtp } from '../api/auth'
+import { login as apiLogin, register as apiRegister } from '../api/auth'
 
 interface User {
-  id: string;
-  email: string;
-  name?: string;
+  id: string
+  email: string
+  name: string
+  avatar?: string
+  createdAt: string
 }
 
 interface AuthState {
-  step: 'email' | 'code'
-  email: string | null
-  name: string | null
   isAuthed: boolean
   token: string | null
   user: User | null
-  request: (email: string, name?: string) => Promise<boolean>
-  verify: (code: string) => Promise<boolean>
-  resetStep: () => void
+  login: (email: string, password: string) => Promise<boolean>
+  register: (email: string, password: string, name?: string) => Promise<boolean>
   logout: () => void
 }
 
 export const useAuth = create<AuthState>()(
   persist(
-    (set, get) => ({
-      step: 'email',
-      email: null,
-      name: null,
+    (set) => ({
       isAuthed: false,
       token: null,
       user: null,
-      async request(email, name) {
+      async login(email, password) {
         try {
-          await requestOtp(email, name)
-          set({ email, name: name || null, step: 'code' })
+          const { token, user } = await apiLogin(email, password)
+          set({ isAuthed: true, token, user })
           return true
         } catch (e) {
           console.error(e)
           return false
         }
       },
-      async verify(code) {
+      async register(email, password, name) {
         try {
-          const { token, user } = await verifyOtp(get().email!, code)
-          set({ isAuthed: true, token, user, step: 'email' })
+          const { token, user } = await apiRegister(email, password, name)
+          set({ isAuthed: true, token, user })
           return true
         } catch (e) {
           console.error(e)
           return false
         }
       },
-      resetStep: () => set({ step: 'email', email: null, name: null }),
-      logout: () => set({ email: null, name: null, isAuthed: false, token: null, user: null, step: 'email' }),
+      logout: () => set({ isAuthed: false, token: null, user: null }),
     }),
     { name: 'interiit-auth' }
   )

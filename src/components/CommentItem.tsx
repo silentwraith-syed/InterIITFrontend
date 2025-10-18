@@ -9,7 +9,7 @@ import CommentEditor from "./CommentEditor";
 
 
 export default function CommentItem({ node, postId, depth = 0 }: { node: Node; postId: string; depth?: number }) {
-  const { upvote, add } = useComments()
+  const { upvote, add, hasUpvoted } = useComments()
   const [open, setOpen] = useState(true)
   const [replying, setReplying] = useState(false)
 
@@ -17,26 +17,38 @@ export default function CommentItem({ node, postId, depth = 0 }: { node: Node; p
   const name = node.user?.name || "Unknown"
   const avatar = node.user?.avatar || "https://i.pravatar.cc/150?u=placeholder"
 
-  const indentClass = depth > 0 ? `ml-${depth * 4}` : "";
+  const replyCount = node.children.length
+  const isUpvoted = hasUpvoted(node.id)
 
   return (
-    <div className={`mt-3 ${indentClass}`}>
+    <div className={`mt-4 ${depth > 0 ? 'comment-nested' : ''}`}>
       <div className="flex gap-3">
         <Avatar src={avatar} alt={name} />
-        <div className="flex-1">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="font-medium">{name}</span>
-            <span className="text-base-mute">· {timeAgo(node.created_at)}</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 text-sm flex-wrap">
+            <span className="font-medium text-base-text">{name}</span>
+            <span className="text-base-mute">·</span>
+            <span className="text-base-mute">{timeAgo(node.created_at)}</span>
           </div>
-          <p className="mt-1 leading-relaxed">{node.text}</p>
-          <div className="mt-1 flex items-center gap-2">
-            <VoteButton count={node.upvotes} onUpvote={() => upvote(node.id)} />
-            <button className="btn-ghost" onClick={() => setReplying((v) => !v)}>
+          <p className="mt-2 leading-relaxed text-base-text break-words">{node.text}</p>
+          <div className="mt-2 flex items-center gap-3 flex-wrap">
+            <VoteButton 
+              count={node.upvotes} 
+              onUpvote={() => upvote(node.id)} 
+              isUpvoted={isUpvoted}
+            />
+            <button 
+              className="btn-ghost text-sm py-1 px-2" 
+              onClick={() => setReplying((v) => !v)}
+            >
               Reply
             </button>
-            {node.children.length > 0 && (
-              <button className="btn-ghost" onClick={() => setOpen((v) => !v)}>
-                {open ? "Collapse" : `Expand (${node.children.length})`}
+            {replyCount > 0 && (
+              <button 
+                className="btn-ghost text-sm py-1 px-2" 
+                onClick={() => setOpen((v) => !v)}
+              >
+                {open ? '▼' : '▶'} {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
               </button>
             )}
           </div>

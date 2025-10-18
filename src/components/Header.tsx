@@ -4,7 +4,7 @@ import { LogOut, MessageSquare } from "lucide-react";
 
 
 export default function Header() {
-const { isAuthed, email, logout } = useAuth();
+const { isAuthed, user, logout } = useAuth();
 const nav = useNavigate();
 return (
 <header className="sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-base-bg/70">
@@ -16,7 +16,7 @@ return (
 <div className="flex items-center gap-2">
 {isAuthed ? (
 <>
-<span className="badge hidden sm:inline">{email}</span>
+<span className="badge hidden sm:inline">{user?.email || user?.name || 'User'}</span>
 <button className="btn-ghost" onClick={() => { logout(); nav("/login"); }}>
 <LogOut className="w-5 h-5" /> <span className="hidden sm:inline">Logout</span>
 </button>

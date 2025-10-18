@@ -33,3 +33,10 @@ body {
 .badge {
 @apply text-xs px-2 py-1 rounded-full bg-base-soft border border-base-border;
 }
+
+/* Comment nesting styles */
+.comment-nested {
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid #1f2937;
+}

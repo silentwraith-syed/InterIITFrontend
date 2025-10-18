@@ -1,9 +1,22 @@
 import { api } from './client'
 
-export async function requestOtp(email: string, name?: string) {
-  return api.post('/api/auth/request-otp', { email, name })
+interface AuthResponse {
+  token: string
+  user: {
+    id: string
+    email: string
+    name: string
+    avatar?: string
+    createdAt: string
+  }
 }
-export async function verifyOtp(email: string, code: string) {
-  const { data } = await api.post('/api/auth/verify-otp', { email, code })
-  return data as { token: string; user: any }
+
+export async function register(email: string, password: string, name?: string) {
+  const { data } = await api.post<AuthResponse>('/api/auth/register', { email, password, name })
+  return data
+}
+
+export async function login(email: string, password: string) {
+  const { data } = await api.post<AuthResponse>('/api/auth/login', { email, password })
+  return data
 }

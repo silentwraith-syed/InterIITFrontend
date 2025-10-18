@@ -7,6 +7,7 @@ interface CommentResponse {
   upvotes: number
   createdAt: string
   userId: string
+  hasUpvoted?: boolean // NEW: Backend tells us if current user upvoted this
   user?: {
     id: string
     name: string
